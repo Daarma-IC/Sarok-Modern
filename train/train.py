@@ -1,12 +1,3 @@
-"""
-Train YOLOv8n detection model on trash dataset.
-
-Usage:
-    python train/train.py --data dataset/taco_yolo/data.yaml --epochs 2
-    python train/train.py --data dataset/taco_yolo/data.yaml --epochs 50
-    python train/train.py --epochs 50   # uses SAMPAH dataset by default
-"""
-
 import argparse
 import shutil
 from pathlib import Path
@@ -20,20 +11,17 @@ except ImportError:
 
 def main():
     parser = argparse.ArgumentParser(description="Train YOLOv8n detection for trash")
-    parser.add_argument("--data",    type=str,   default=None,          help="Path to data.yaml")
-    parser.add_argument("--epochs",  type=int,   default=50,            help="Number of epochs (default: 50)")
-    parser.add_argument("--imgsz",   type=int,   default=640,           help="Image size (default: 640)")
-    parser.add_argument("--batch",   type=int,   default=16,            help="Batch size (default: 16)")
-    parser.add_argument("--weights", type=str,   default="yolov8n.pt",  help="Pretrained weights (default: yolov8n.pt)")
-    parser.add_argument("--device",  type=str,   default=None,          help="Device: None=auto, 'cpu', '0'=GPU")
-    parser.add_argument("--name",    type=str,   default="trash_det",   help="Run name")
+    parser.add_argument("--data",    type=str,   default=None,         help="Path to data.yaml")
+    parser.add_argument("--epochs",  type=int,   default=50,           help="Number of epochs")
+    parser.add_argument("--imgsz",   type=int,   default=640,          help="Image size")
+    parser.add_argument("--batch",   type=int,   default=16,           help="Batch size")
+    parser.add_argument("--weights", type=str,   default="yolov8n.pt", help="Pretrained weights")
+    parser.add_argument("--device",  type=str,   default=None,         help="Device: cpu or 0 for GPU")
+    parser.add_argument("--name",    type=str,   default="trash_det",  help="Run name")
     args = parser.parse_args()
 
     project_dir = Path(__file__).parent.parent
-    if args.data:
-        data_yaml = Path(args.data)
-    else:
-        data_yaml = project_dir / "SAMPAH.v1-data-baru.yolov8" / "data.yaml"
+    data_yaml   = Path(args.data) if args.data else project_dir / "SAMPAH.v1-data-baru.yolov8" / "data.yaml"
     runs_dir    = project_dir / "runs"
     models_dir  = project_dir / "models"
     models_dir.mkdir(exist_ok=True)
@@ -44,7 +32,6 @@ def main():
 
     print("=" * 60)
     print("  YOLOv8n Detection — Trash Detector")
-    print("  Dataset: SAMPAH Roboflow (8 classes + bounding boxes)")
     print("=" * 60)
     print(f"  Weights : {args.weights}")
     print(f"  Data    : {data_yaml}")
@@ -72,7 +59,6 @@ def main():
     print(f"\n[INFO] Starting training...\n")
     model.train(**train_kwargs)
 
-    # Copy best model
     best_src = runs_dir / args.name / "weights" / "best.pt"
     if best_src.exists():
         best_dst = models_dir / "trash_det_best.pt"

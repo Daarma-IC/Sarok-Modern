@@ -1,12 +1,3 @@
-"""
-Convert TACO dataset (COCO format) to YOLOv8 detection format.
-Keeps original 60 TACO classes — category mapping (organik/anorganik/residu/B3)
-is applied in detect_camera.py at inference time.
-
-Usage:
-    python train/convert_taco.py
-"""
-
 import json
 import shutil
 import random
@@ -56,8 +47,8 @@ def main():
     with open(ann_file, encoding="utf-8") as f:
         coco = json.load(f)
 
-    images     = {img["id"]: img for img in coco["images"]}
-    categories = {cat["id"]: cat["name"] for cat in coco["categories"]}
+    images      = {img["id"]: img for img in coco["images"]}
+    categories  = {cat["id"]: cat["name"] for cat in coco["categories"]}
     class_names = [categories[k] for k in sorted(categories.keys())]
     cat_to_idx  = {k: i for i, k in enumerate(sorted(categories.keys()))}
 
@@ -76,7 +67,7 @@ def main():
 
     random.seed(42)
     random.shuffle(valid_ids)
-    split = int(len(valid_ids) * TRAIN_RATIO)
+    split  = int(len(valid_ids) * TRAIN_RATIO)
     splits = {"train": valid_ids[:split], "val": valid_ids[split:]}
 
     if out_dir.exists():
@@ -90,11 +81,11 @@ def main():
     counts = {"train": 0, "val": 0}
     for split_name, ids in splits.items():
         for iid in ids:
-            img   = images[iid]
-            src   = taco_dir / "data" / img["file_name"]
-            stem  = img["file_name"].replace("/", "_").replace("\\", "_")
-            base  = Path(stem).stem
-            ext   = Path(stem).suffix or ".jpg"
+            img  = images[iid]
+            src  = taco_dir / "data" / img["file_name"]
+            stem = img["file_name"].replace("/", "_").replace("\\", "_")
+            base = Path(stem).stem
+            ext  = Path(stem).suffix or ".jpg"
 
             shutil.copy2(src, out_dir / "images" / split_name / (base + ext))
 
@@ -105,7 +96,6 @@ def main():
                     lf.write(f"{ci} {cx:.6f} {cy:.6f} {nw:.6f} {nh:.6f}\n")
             counts[split_name] += 1
 
-    # Write data.yaml
     yaml_path = out_dir / "data.yaml"
     with open(yaml_path, "w", encoding="utf-8") as f:
         f.write(f"path: {out_dir.resolve()}\n")
@@ -116,7 +106,7 @@ def main():
 
     print(f"\n[DONE] train: {counts['train']}  val: {counts['val']}")
     print(f"[YAML] {yaml_path}")
-    print(f"\n[NEXT] python train/train.py --data dataset/taco_yolo/data.yaml --epochs 2")
+    print(f"\n[NEXT] python train/train.py --data dataset/taco_yolo/data.yaml --epochs 50")
 
 
 if __name__ == "__main__":

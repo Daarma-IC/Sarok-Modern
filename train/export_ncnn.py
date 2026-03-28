@@ -1,11 +1,3 @@
-"""
-Export trained YOLOv8 detection model to NCNN format.
-
-Usage:
-    python train/export_ncnn.py
-    python train/export_ncnn.py --model models/trash_det_best.pt --imgsz 640
-"""
-
 import argparse
 import shutil
 from pathlib import Path
@@ -20,7 +12,7 @@ except ImportError:
 def main():
     parser = argparse.ArgumentParser(description="Export YOLOv8 detection model to NCNN")
     parser.add_argument("--model", type=str, default=None, help="Path to .pt model")
-    parser.add_argument("--imgsz", type=int, default=640,  help="Image size (default: 640)")
+    parser.add_argument("--imgsz", type=int, default=640,  help="Image size")
     args = parser.parse_args()
 
     project_dir = Path(__file__).parent.parent
@@ -42,11 +34,9 @@ def main():
     model = YOLO(str(model_path))
 
     print("\n[INFO] Exporting to NCNN...")
-    ncnn_dir = model.export(format="ncnn", imgsz=args.imgsz)
-    print(f"  Exported to: {ncnn_dir}")
-
-    # Copy to models/
+    ncnn_dir  = model.export(format="ncnn", imgsz=args.imgsz)
     ncnn_path = Path(ncnn_dir)
+
     if ncnn_path.is_dir():
         dest = models_dir / "trash_det_ncnn"
         if dest.exists():
