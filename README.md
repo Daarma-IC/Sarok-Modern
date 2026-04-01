@@ -321,4 +321,4 @@ python detect_camera.py --model models/trash_det_ncnn --imgsz 320
 
 ---
 
-*Dibuat dengan ❤️ | Dataset: TACO | Model: YOLOv8n | Format Deploy: NCNN*
+*Copyright by The Best of Human's Creatures*
