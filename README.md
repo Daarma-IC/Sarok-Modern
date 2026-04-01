@@ -51,6 +51,7 @@ Target akhirnya adalah model ini bisa berjalan di **Raspberry Pi** secara offlin
 └─────────────────────────────┘
 ```
 
+![Screenshot Deteksi Kamera](screenshots/1.png)
 ---
 
 ## 🗓️ Perjalanan Pengembangan
